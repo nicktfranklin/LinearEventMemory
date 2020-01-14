@@ -1,37 +1,44 @@
-var canvas_size = 350;
-var mask_duration = 0;
 
-function draw() {
+// here, I'm just manually defining and event that will be read in for a single trial
+var init_x = 180;
+var init_y = 150;
+var trial_sequence = {
+  posX : [init_x, init_x-10, init_x-25, init_x-60, init_x-110, init_x-170],
+  posY : [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130],
+  color_sequence  : [
+    [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50]
+  ] // defined in hsluv space
+}
+
+function run_all_trials(){
+  trial(trial_sequence);
+}
+
+
+function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size=350) {
 
   var props = new Object();
   props.width = 20;
   props.height = 20;
-
-  var rbg = hsluv.hsluvToRgb([0, 50, 50]);
-  props.fillStyle = 'rgba(' + rbg[0]* 255 + ', ' + rbg[1]* 255 + ', ' + rbg[2]* 255 + ', 0.75)';
-  props.duration = 300; // in ms
+  props.duration = dot_duration; // in ms
 
   var canvas = document.getElementById('canvas_id');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
 
-    init_x = 180;
-    init_y = 150;
-
-    var x_positions = [init_x, init_x-10, init_x-25, init_x-60, init_x-110, init_x-170];
-    var y_positions = [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130];
 
     // animate the squares
     var i=0;
     function animate_sequence(){
       ctx.clearRect(0,0,500,500);
 
-      props.posX = x_positions[i];
-      props.posY = y_positions[i];
+      props.posX = trial_sequence.posX[i];
+      props.posY = trial_sequence.posY[i];
+      props.fillStyle = hsluv.hsluvToHex(trial_sequence.color_sequence[i]);
       var square = vanishing_square(ctx, props);
       square.draw();
       i++;
-      if (i < x_positions.length){
+      if (i < trial_sequence.posX.length){
         setTimeout(animate_sequence, duration)
       } else {
         setTimeout(function(){ctx.clearRect(0,0,500,500)}, duration)
@@ -40,10 +47,10 @@ function draw() {
     animate_sequence();
   }
 
-  setTimeout(make_mask, duration * x_positions.length + 500, ctx);
+  setTimeout(make_mask, duration * trial_sequence.posX.length + 500, ctx, mask_duration);
   
-
-  // Allow the click event listener once 
+  var dots_placed = 0;
+  // The click listener detects where the dots have been placed
   function add_listener() {canvas.addEventListener('click', (evt) => {
       // ctx.clearRect(0,0,500,500); // Don't allow multiple clicks to appear at one time.
       var cursor_pos = getMousePos(canvas, evt);
@@ -56,7 +63,7 @@ function draw() {
     }, true)
   }
 
-  setTimeout(add_listener, duration * x_positions.length)
+  setTimeout(add_listener, duration * trial_sequence.posX)
 }
 
 
@@ -101,7 +108,10 @@ function draw_random_color(){
     return hsluv.hsluvToHex([h, s, l]);
 };
 
-function make_mask(ctx, n_squares=50, height=20, width=20, duration=20){
+function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, canvas_size=350){
+  
+  // how many times does the mask flicker on and off?
+  var n_squares = duration / dot_duration;
 
   // define the shared properties
   var _props = new Object();
@@ -125,9 +135,6 @@ function make_mask(ctx, n_squares=50, height=20, width=20, duration=20){
   var i = 0;
   function animate(){
     ctx.clearRect(0,0,500,500);
-    // ctx.fillStyle = "#A9A9A9";
-    // var canvas = document.getElementById('canvas_id');
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     function add_square(k){
       _props.posX = x_locs[k];
@@ -147,9 +154,9 @@ function make_mask(ctx, n_squares=50, height=20, width=20, duration=20){
       add_square(i + n_squares * 3);
       add_square(i + n_squares * 4);
 
-      setTimeout(animate, duration)
+      setTimeout(animate, dot_duration)
     } else {
-      setTimeout(function(){ctx.clearRect(0,0,500,500)}, duration)
+      setTimeout(function(){ctx.clearRect(0,0,500,500)}, dot_duration)
     }
   };
   animate();
