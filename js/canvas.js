@@ -67,16 +67,16 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
 
       // cancel condition for the listener
       if (dots_placed == trial_sequence.posX.length) {
-        canvas.removeEventListener('click', clickListener);
+        canvas.removeEventListener('click', clickListener, false);
         display = "<br>Great! You've placed all of the dots";
         $('#trial_text').html(display);
 
       }
       console.log(dots_placed);
-    }, true)
+    }, false)
   }
 
-  setTimeout(add_listener, duration * trial_sequence.posX)
+  setTimeout(add_listener, props.duration * trial_sequence.posX);
 }
 
 
