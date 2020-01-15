@@ -14,13 +14,20 @@ function run_all_trials(){
   trial(trial_sequence);
 }
 
-
 function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size=350) {
 
+  // Trial start
   var props = new Object();
   props.width = 20;
   props.height = 20;
   props.duration = dot_duration; // in ms
+
+  var isi = 500;
+  var sequence_time = dot_duration * trial_sequence.posX.length;
+
+  var dots_placed = new Object();
+  dots_placed.posX = new Array();
+  dots_placed.posY = new Array();
 
   var canvas = document.getElementById('canvas_id');
   if (canvas.getContext) {
@@ -30,6 +37,8 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
     // animate the squares
     var i=0;
     function animate_sequence(){
+      var display = "<br>Remember all of the dots!<br>";
+      $('#trial_text').html(display);
       ctx.clearRect(0,0,500,500);
 
       props.posX = trial_sequence.posX[i];
@@ -47,15 +56,19 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
     setTimeout(animate_sequence, props.duration);
   }
 
-  setTimeout(make_mask, props.duration * trial_sequence.posX.length + 500, ctx, mask_duration);
+  setTimeout(make_mask, sequence_time + isi, ctx, mask_duration);
   
   // The click listener detects where the dots have been placed
   function add_listener() {
-    var dots_placed = 0;
-    var display;
-
+    var dots_remaining = trial_sequence.posX.length;
+    var display =  "Place the dots on the screen, in the order in which you saw them."
+      + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' 
+      + String(dots_remaining) + '</span></span> '
+      + 'left to place!';
+    $('#trial_text').html(display);
+    
     canvas.addEventListener('click', function clickListener(evt) {
-      dots_placed++;
+      dots_remaining--;
 
       // place the dot
       var cursor_pos = getMousePos(canvas, evt);
@@ -65,18 +78,24 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
       var square = vanishing_square(ctx, props);
       square.draw();
 
+      // cache the placed locations
+      dots_placed.posX = props.posX;
+      dots_placed.posY = props.posY;
+
       // cancel condition for the listener
-      if (dots_placed == trial_sequence.posX.length) {
+      if (dots_remaining <= 0) {
         canvas.removeEventListener('click', clickListener, false);
         display = "<br>Great! You've placed all of the dots";
-        $('#trial_text').html(display);
-
+      } else {
+        display = "Place the dots on the screen, in the order in which you saw them."
+        + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' + String(dots_remaining) + '</span></span> '
+        + 'left to place!';
       }
-      console.log(dots_placed);
+      $('#trial_text').html(display);
     }, false)
   }
 
-  setTimeout(add_listener, props.duration * trial_sequence.posX);
+  setTimeout(add_listener, sequence_time + isi + mask_duration + isi);
 }
 
 
@@ -122,6 +141,8 @@ function draw_random_color(){
 };
 
 function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, canvas_size=350){
+  // turn of directions
+  $('#trial_text').html("");
   
   // how many times does the mask flicker on and off?
   var n_squares = duration / dot_duration;
@@ -173,5 +194,4 @@ function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, can
     }
   };
   animate();
-
 }
