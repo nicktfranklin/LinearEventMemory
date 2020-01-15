@@ -3,7 +3,7 @@
 var init_x = 180;
 var init_y = 150;
 var trial_sequence = {
-  posX : [init_x, init_x-10, init_x-25, init_x-60, init_x-110, init_x-170],
+  posX : [init_x, init_x-15, init_x-25, init_x-60, init_x-110, init_x-170],
   posY : [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130],
   color_sequence  : [
     [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50]
@@ -39,27 +39,40 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
       square.draw();
       i++;
       if (i < trial_sequence.posX.length){
-        setTimeout(animate_sequence, duration)
+        setTimeout(animate_sequence, props.duration)
       } else {
-        setTimeout(function(){ctx.clearRect(0,0,500,500)}, duration)
+        setTimeout(function(){ctx.clearRect(0,0,500,500)}, props.duration)
       }
     };
-    animate_sequence();
+    setTimeout(animate_sequence, props.duration);
   }
 
-  setTimeout(make_mask, duration * trial_sequence.posX.length + 500, ctx, mask_duration);
+  setTimeout(make_mask, props.duration * trial_sequence.posX.length + 500, ctx, mask_duration);
   
-  var dots_placed = 0;
   // The click listener detects where the dots have been placed
-  function add_listener() {canvas.addEventListener('click', (evt) => {
-      // ctx.clearRect(0,0,500,500); // Don't allow multiple clicks to appear at one time.
+  function add_listener() {
+    var dots_placed = 0;
+    var display;
+
+    canvas.addEventListener('click', function clickListener(evt) {
+      dots_placed++;
+
+      // place the dot
       var cursor_pos = getMousePos(canvas, evt);
 
       props.posX = cursor_pos['x'] - (props.width / 2);
       props.posY = cursor_pos['y'] - (props.height / 2);
       var square = vanishing_square(ctx, props);
       square.draw();
-      // square.clear();
+
+      // cancel condition for the listener
+      if (dots_placed == trial_sequence.posX.length) {
+        canvas.removeEventListener('click', clickListener);
+        display = "<br>Great! You've placed all of the dots";
+        $('#trial_text').html(display);
+
+      }
+      console.log(dots_placed);
     }, true)
   }
 
