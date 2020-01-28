@@ -81,7 +81,7 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
     var display =  "<br>Place the dots on the screen, in the order in which you saw them."
       + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' 
       + String(dots_remaining) + '</span></span> '
-      + 'left to place! Next box to place:';
+      + 'left to place! Next dot to place:';
 
     $('#trial_text').html(display);
 
@@ -140,11 +140,12 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
           + 'class="btn btn-primary btn-lg continue"> Next Trial '
           + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
         ctx_probe.clearRect(0,0,20,20);
+        document.getElementById('next').onclick = function() {location.reload()};
       } else {
         display = "<br>Place the dots on the screen, in the order in which you saw them."
         + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' 
         + String(dots_remaining) + '</span></span> '
-        + 'left to place! Next box to place:';
+        + 'left to place! Next dot to place:';
       }
       $('#trial_text').html(display);
     }, false)
