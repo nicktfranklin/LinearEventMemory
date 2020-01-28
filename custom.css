@@ -1,11 +1,13 @@
 canvas { 
-  border: 1px solid black; 
   margin-right: auto;
   margin-left: auto;
   display: block;
   background-color: '#A9A9A9';
-}
+} 
 
+#task_box {
+  border: 1px solid black; 
+}
 
 body {
   padding:0;
@@ -93,6 +95,16 @@ line-height: 1.1em;
 /*}*/
 
 #trial_text {
+  margin: 0 auto;
+  width: 500px;
+  text-align: center;
+  line-height: 25px;
+  height: 85px;
+  /*font-size: 11pt;*/
+  /*line-height: 1.1em;*/
+}
+
+#trial_text_bottom {
   margin: 0 auto;
   width: 500px;
   text-align: center;
