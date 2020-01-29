@@ -2,20 +2,28 @@
 // here, I'm just manually defining and event that will be read in for a single trial
 var init_x = 180;
 var init_y = 150;
-var trial_sequence = {
+var trial_parameters = {
   posX : [init_x, init_x-15, init_x-25, init_x-60, init_x-110, init_x-170],
   posY : [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130],
-  color_sequence : palette('tol-rainbow', 6),
-  // color_sequence  : [
-  //   [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50], [0, 50, 50]
-  // ] // defined in hsluv space
+  color_sequence : palette('tol', 6),
 }
 
 function run_all_trials(){
-  trial(trial_sequence);
+  trial(trial_parameters);
 }
 
-function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size=350) {
+function trial(trial_parameters) {
+  // function takes in a set of parameters and creates the trial
+
+  // default parameters
+  var dot_duration = 300;
+  var mask_duration = 500;
+  var canvas_size = 350;
+  var isi = 500;
+
+  // 
+  var sequence_time = dot_duration * trial_parameters.posX.length;
+
 
   // define an object to contain the properties of a
   // the cues
@@ -33,14 +41,13 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
   props_probe.posX = 0;
   props_probe.posY = 0;
 
-  var isi = 500;
-  var sequence_time = dot_duration * trial_sequence.posX.length;
-
+  // store the dots that the subject places in an object
   var dots_placed = new Object();
   dots_placed.posX = new Array();
   dots_placed.posY = new Array();
   dots_placed.n = 0;
 
+  // canvas objects that show stim/probes
   var canvas = document.getElementById('task_box');
   var canvas_probe = document.getElementById('probe_box');
 
@@ -56,14 +63,14 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
       $('#trial_text').html(display);
       ctx_task.clearRect(0,0,500,500);
 
-      props.posX = trial_sequence.posX[i];
-      props.posY = trial_sequence.posY[i];
-      props.fillStyle = "#" + trial_sequence.color_sequence[i];
+      props.posX = trial_parameters.posX[i];
+      props.posY = trial_parameters.posY[i];
+      props.fillStyle = "#" + trial_parameters.color_sequence[i];
       // props.fillStyle = hsluv.hsluvToHex(trial_sequence.color_sequence[i]);
-      var square = vanishing_square(ctx_task, props);
-      square.draw();
+      draw_square(ctx_task, props);
+
       i++;
-      if (i < trial_sequence.posX.length){
+      if (i < trial_parameters.posX.length){
         setTimeout(animate_sequence, props.duration)
       } else {
         setTimeout(function(){ctx_task.clearRect(0,0,500,500)}, props.duration)
@@ -72,12 +79,14 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
     setTimeout(animate_sequence, props.duration);
   }
 
-  setTimeout(make_mask, sequence_time + isi, ctx_task, mask_duration);
+  setTimeout(make_mask, sequence_time + isi, canvas, mask_duration);
   
   // The click listener detects where the dots have been placed
   var total_score = 0;
   function add_listener() {
-    var dots_remaining = trial_sequence.posX.length;
+    
+    var dots_remaining = trial_parameters.posX.length;
+
     var display =  "<br>Place the dots on the screen, in the order in which you saw them."
       + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' 
       + String(dots_remaining) + '</span></span> '
@@ -87,67 +96,79 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
 
     // draw the first dot to place
     // place the memory probe
-    props_probe.fillStyle = "#" + trial_sequence.color_sequence[dots_placed.n];
-    vanishing_square(ctx_probe, props_probe).draw();
+    props_probe.fillStyle = "#" + trial_parameters.color_sequence[dots_placed.n];
+    draw_square(ctx_probe, props_probe);
     
+    // this click listener handles placing the dots on the canvas 
     canvas.addEventListener('click', function clickListener(evt) {
       // increment/decrement counters
       dots_remaining--;
       dots_placed.n++;
 
-      // place the dot
+      // get the mouse cursor location at the click
       var cursor_pos = getMousePos(canvas, evt);
 
+      // draw the square at the mouse location
       props.posX = cursor_pos['x'] - (props.width / 2);
       props.posY = cursor_pos['y'] - (props.height / 2);
-      props.fillStyle = "#" + trial_sequence.color_sequence[dots_placed.n - 1];
-      vanishing_square(ctx_task, props).draw();
+      props.fillStyle = "#" + trial_parameters.color_sequence[dots_placed.n - 1];
+      draw_square(ctx_task, props);
 
-      if (dots_remaining > 0) {
-        props_probe.fillStyle = "#" + trial_sequence.color_sequence[dots_placed.n];
-        vanishing_square(ctx_probe, props_probe).draw();
-      } else {
-        ctx_probe.clearRect(0,0,20,20);
-      };
-  
-
+    
       // cache the placed locations
       dots_placed.posX.push(props.posX);
       dots_placed.posY.push(props.posY);
 
-      // calculate the error in euclidean distance
+      // calculate the error in terms of squared error loss
+      // (N.b., this squared error term is scalled linearlly, 
+      // so it works as an equivalent loss function)
       var i = dots_placed.posX.length;
       var squared_error = 0;
-      // this squared error term is scalled linearlly, 
-      // so it works as an equivalent loss function
       squared_error +=  
-        Math.pow((props.posX - trial_sequence.posX[i-1])/(canvas_size/4), 2) + 
-        Math.pow((props.posY - trial_sequence.posY[i-1])/(canvas_size/4), 2);
-      console.log(squared_error);
-      // total_score is an average
-      total_score += (1-squared_error)*100 / trial_sequence.posX.length;
-      console.log(total_score);
-
+        Math.pow((props.posX - trial_parameters.posX[i-1])/(canvas_size/4), 2) + 
+        Math.pow((props.posY - trial_parameters.posY[i-1])/(canvas_size/4), 2);
+      
+      // total_score is an average over the trials
+      total_score += (1-squared_error)*100 / trial_parameters.posX.length;
 
       // cancel condition for the listener
       if (dots_remaining <= 0) {
+        // stop allowing clicks to place new dots
         canvas.removeEventListener('click', clickListener, false);
-        display = "<br>Great! You've placed all of the dots<br>You scored " 
+        
+        // change the message at the top
+        display = 
+          "<br>Great! You've placed all of the dots<br>You scored " 
         + '<span style="font-size:115%"><span style="font-weight: bold">'
-        + String(Math.max(Math.round(total_score),0)) + '</span></span> points!';
+        + String(Math.max(Math.round(total_score),0)) + '</span></span> /100!';
+
+        // remove the final probe 
+        ctx_probe.clearRect(0,0,20,20);
+
+        // add a button at the end to go to the next trial
         $('#trial_text_bottom').html(
           '<div class="col-xs-3"><button type="button" id="next" value="next" '
           + 'class="btn btn-primary btn-lg continue"> Next Trial '
           + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
-        ctx_probe.clearRect(0,0,20,20);
-        document.getElementById('next').onclick = function() {location.reload()};
+          document.getElementById('next').onclick = next_trial; // click listener
+
       } else {
+        // if trial is continuing
+
+        // update the message at the top
         display = "<br>Place the dots on the screen, in the order in which you saw them."
         + '<br>You have <span style="font-size:115%"><span style="font-weight: bold">' 
         + String(dots_remaining) + '</span></span> '
         + 'left to place! Next dot to place:';
+
+        // update the probe
+        props_probe.fillStyle = "#" + trial_parameters.color_sequence[dots_placed.n];
+        draw_square(ctx_probe, props_probe);
       }
+
+      // push the updated message to the top display
       $('#trial_text').html(display);
+
     }, false)
   }
 
@@ -155,27 +176,14 @@ function trial(trial_sequence, dot_duration=300, mask_duration=1000, canvas_size
 }
 
 
-function vanishing_square(ctx, props){
-  this.posX = props.posX;
-  this.posY = props.posY;
-
-  this.width = props.width;
-  this.height = props.height;
-  this.fillStyle = props.fillStyle;
-
-  this.duration = props.duration;
-
-  this.draw = function(){
-    ctx.fillStyle = this.fillStyle;
-    ctx.fillRect(this.posX, this.posY, this.width, this.height);
-  }
-  this.clear = function(){
-    setTimeout(function() {
-      ctx.clearRect(this.posX-1, this.posY-1, this.width+2, this.height+2);
-    }, this.duration);
-  }
-  return this;
+function draw_square(ctx, props){
+  ctx.fillStyle = props.fillStyle;
+  ctx.fillRect(props.posX, props.posY, props.width, props.height);
 };
+
+function next_trial(){
+  location.reload();
+}
 
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
@@ -196,7 +204,8 @@ function draw_random_color(){
     return hsluv.hsluvToHex([h, s, l]);
 };
 
-function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, canvas_size=350){
+function make_mask(canvas, duration=1000, height=20, width=20, dot_duration=20){
+  var ctx = canvas.getContext('2d');
   // turn of directions
   $('#trial_text').html("");
   
@@ -215,11 +224,10 @@ function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, can
   var fillStyles = new Array();
 
   for (i = 0; i < n_squares * 5; i++){
-    x_locs.push(getRandomInt(max=canvas_size));
-    y_locs.push(getRandomInt(max=canvas_size));
+    x_locs.push(getRandomInt(max=canvas.width));
+    y_locs.push(getRandomInt(max=canvas.height));
     fillStyles.push(draw_random_color());
   };
-  // console.log(fillStyles);
   
   
   var i = 0;
@@ -231,8 +239,7 @@ function make_mask(ctx, duration=1000, height=20, width=20, dot_duration=20, can
       _props.posY = y_locs[k];
 
       _props.fillStyle = fillStyles[k];
-      square = vanishing_square(ctx, _props);
-      square.draw();
+      draw_square(ctx, _props);
     }
 
     i++;
