@@ -1,15 +1,58 @@
 
 // here, I'm just manually defining and event that will be read in for a single trial
-var init_x = 180;
-var init_y = 150;
-var trial_parameters = {
-  posX : [init_x, init_x-15, init_x-25, init_x-60, init_x-110, init_x-170],
-  posY : [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130],
-  color_sequence : palette('tol', 6),
-}
+// var init_x = 180;
+// var init_y = 150;
+// var trial_parameters = {
+//   posX : [init_x, init_x-15, init_x-25, init_x-60, init_x-110, init_x-170],
+//   posY : [init_y, init_y-13, init_y-31, init_y-56, init_y-85,  init_y-130],
+//   color_sequence : palette('tol', 6),
+// }
 
-// treat the list of trials as a queue
-var queue_trials = [trial_parameters];
+// // treat the list of trials as a queue
+// var queue_trials = [trial_parameters, trial_parameters];
+
+// const matrixK = Math.matrix([[0, 1], [2, 3], [4, 5]]);
+// const matrixL = Math.matrix([[2, 4], [6, 2]]);
+// const matrixKL = Math.multiply(matrixK, matrixL);
+
+// console.log(matrixKL);
+
+// console.log(truncated_geometric(0.2, 25));
+// console.log(isotropic_norm(6));
+var A_l = [[1.06465446, 0.10682176], [-0.10682176, 1.06465446]];
+var process_init_l = 6.0;
+var process_noise_l = 0.02;
+var observ_noise = 25.0
+var observ_scale = 15.0
+var p = 0.2
+var t_max = 20;
+var t_min = 5;
+
+function generate_trial_parameters(
+  A_l, process_init_l, process_noise_l, observ_noise, observ_scale) {
+    var duration = truncated_geometric(p, t_max) + t_min;;
+    var x = sample_lds_states(A_l, process_init_l, process_noise_l, duration);
+    var z = make_observations(x, observ_noise, observ_scale);
+    
+    // convert the sampled values to pixel space and present in usable format
+    var posX = [];
+    var posY = [];
+    for (var ii=0; ii < z.length; ii ++){ 
+      posX.push(z[ii][0] + 350/2);
+      posY.push(z[ii][1] + 350/2);
+    }
+    return {posX : posX, posY: posY,  color_sequence: palette('tol', z.length)}
+  };
+
+var queue_trials = [];
+for (var ii=0; ii < 10; ii ++){ 
+    queue_trials.push(
+      generate_trial_parameters(
+        A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+        )
+    )
+  };
+console.log(queue_trials);
 
 function run_all_trials() {
 
