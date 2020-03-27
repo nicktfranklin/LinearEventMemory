@@ -78,11 +78,13 @@ function sample_lds_states(A, process_init, process_noise, duration) {
 
 function make_observations(x, observ_noise, observ_scale) {
     var z = [];
-    var z0;
+    var z0, z00;
     for (var ii = 0; ii < x.length; ii ++ ) {
         z0 = []
         for (var jj = 0; jj < x[0].length; jj ++ ) {
-          z0.push(x[ii][jj] * observ_scale + univariate_norm() * Math.sqrt(observ_noise));
+            z00 = x[ii][jj] * observ_scale;
+            z00 += univariate_norm() * Math.sqrt(observ_noise);
+            z0.push(z00);
         }
         z.push(z0);
     }
