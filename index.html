@@ -15,7 +15,7 @@
 			psiturk specifically depends on underscore.js, backbone.js and jquery
       -->
     <script>
-      fetch('https://nicktfranklin.github.io/LinearEventMemory/static/templates/instruct-welcome.html')
+      fetch('./static/templates/instruct-welcome.html')
       .then(data => data.text())
       .then(html => document.getElementById('elementID').innerHTML = html);
     </script>
