@@ -19,23 +19,25 @@
 
       <!-- code for experiment -->
       <script src="js/utils.js"></script>
+      <script src="js/generate_trials.js"></script>
       <script src="js/task.js"></script>
 
 
     </head>
-    <body onload="run_all_trials();">
+    <body onload="start_experiment();">
       <div id="container-exp">
         <div id="trial_text_container">
           <div id="trial_text">
             <br>Press enter to start<br>
           </div>
-          <canvas id="probe_box" width="20" height="20"></canvas>
+          <div id='probe_box_wrapper'><canvas id="probe_box" width="20" height="20"></canvas> </div>
+          <!-- <canvas id="probe_box" width="20" height="20"></canvas> -->
           <br>
             <div id = 'experiment'>
               <div id="task_display">
-                <canvas id="task_box" width="425" height="400">
+                <!-- <canvas id="task_box" width="425" height="400">
                   Text goes here that the user will see if their browser doesn't support Canvas
-                </canvas>
+                </canvas> -->
               </div>
             </div>
           <div id="trial_text_bottom">
