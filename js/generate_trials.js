@@ -115,7 +115,7 @@ function run_block(queue_trials) {
 
       var iti_counter = 0;
       function iti(){
-        var display = "<br>Remember all of thsdfasdese squares!<br>";
+        var display = "<br>Remember all of these squares!<br>";
         $('#trial_text').html(display);
         $('#trial_text_bottom').html('');
 
