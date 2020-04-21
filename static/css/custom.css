@@ -3,10 +3,16 @@ canvas {
   margin-left: auto;
   display: block;
   background-color: '#A9A9A9';
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
 } 
 
 #task_box {
   border: 1px solid black; 
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 body {
@@ -47,8 +53,11 @@ color: #ccccff;
 }
 
 #container-consent, #container-exp, #container-questionnaire {  /* override padding to fit long consent forms and exp display*/
-padding: 1% 20px 10px 20px;
+  position: absolute;
+
+  padding: 1% 20px 10px 20px;
 }
+
 
 #container-consent {
   position: relative;
@@ -98,8 +107,8 @@ line-height: 1.1em;
   line-height: 25px;
   height: 85px;
   display: block;
-  /*font-size: 11pt;*/
-  /*line-height: 1.1em;*/
+  /* font-size: 14pt; */
+  /* line-height: 1.1em; */
 }
 
 #trial_text_instructions {
@@ -109,11 +118,17 @@ line-height: 1.1em;
   line-height: 25px;
   height: 400px;
   display: block;
-  /*font-size: 11pt;*/
+  font-size: 13pt;
   /*line-height: 1.1em;*/
 }
 
+#experiment {
+  border: 4px;
+  display: block;
+}
+
 #trial_text_bottom {
+  border: 1px solid black; 
   margin: 0 auto;
   width: 500px;
   text-align: center;
