@@ -90,9 +90,6 @@ font-size: 11pt;
 line-height: 1.1em;
 }
 
-/*#trial_text_container {*/
-
-/*}*/
 
 #trial_text {
   margin: 0 auto;
@@ -100,6 +97,18 @@ line-height: 1.1em;
   text-align: center;
   line-height: 25px;
   height: 85px;
+  display: block;
+  /*font-size: 11pt;*/
+  /*line-height: 1.1em;*/
+}
+
+#trial_text_instructions {
+  margin: 0 auto;
+  width: 500px;
+  text-align: justify;
+  line-height: 25px;
+  height: 400px;
+  display: block;
   /*font-size: 11pt;*/
   /*line-height: 1.1em;*/
 }
@@ -110,6 +119,8 @@ line-height: 1.1em;
   text-align: center;
   line-height: 25px;
   height: 85px;
+  /* position: relative; */
+  display: block;
   /*font-size: 11pt;*/
   /*line-height: 1.1em;*/
 }

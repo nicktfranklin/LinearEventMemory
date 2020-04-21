@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- 
-  The exp.html is the main form that
+  The html.html is the main form that
   controls the experiment.
 
   see comments throughout for advice
@@ -24,27 +24,13 @@
 
 
     </head>
+    <!-- 
+      All of the experiment is controlled through javascript and jquerry.  This is just a 
+      place holder, with the html pages being "stage_instructions" and "stage_exp", both of 
+      which are set via jquerry within javascript functions
+    -->
     <body onload="start_experiment();">
-      <div id="container-exp">
-        <div id="trial_text_container">
-          <div id="trial_text">
-            <br>Press enter to start<br>
-          </div>
-          <div id='probe_box_wrapper'><canvas id="probe_box" width="20" height="20"></canvas> </div>
-          <!-- <canvas id="probe_box" width="20" height="20"></canvas> -->
-          <br>
-            <div id = 'experiment'>
-              <div id="task_display">
-                <!-- <canvas id="task_box" width="425" height="400">
-                  Text goes here that the user will see if their browser doesn't support Canvas
-                </canvas> -->
-              </div>
-            </div>
-          <div id="trial_text_bottom">
-              <br><br>
-          </div>
-        </div>
-      </div>
+      <div id="container-exp"></div>
     </body>
 </html>
 

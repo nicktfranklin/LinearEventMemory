@@ -113,11 +113,26 @@ function run_block(queue_trials) {
       var ctx_task = canvas.getContext('2d');
       var ctx_probe = canvas_probe.getContext('2d');
 
+      var iti_counter = 0;
+      function iti(){
+        var display = "<br>Remember all of thsdfasdese squares!<br>";
+        $('#trial_text').html(display);
+        $('#trial_text_bottom').html('');
+
+        iti_counter++;
+        if (iti_counter < 3){
+          setTimeout(iti, 1000.0);
+        } else {
+          return;
+        }
+      };
+      setTimeout(iti, 1000.0);
+
 
       // animate the squares
       var i=0;
       function animate_sequence(){
-        var display = "<br>Remember all of the dots!<br>";
+        var display = "<br>Remember all of these squares!<br>";
         $('#trial_text').html(display);
         $('#trial_text_bottom').html('');
         ctx_task.clearRect(0,0,500,500);
@@ -125,7 +140,6 @@ function run_block(queue_trials) {
         props.posX = trial_parameters.posX[i];
         props.posY = trial_parameters.posY[i];
         props.fillStyle = "#" + trial_parameters.color_sequence[i];
-        // props.fillStyle = hsluv.hsluvToHex(trial_sequence.color_sequence[i]);
         draw_square(ctx_task, props);
 
         i++;
@@ -264,7 +278,7 @@ function draw_random_color(){
 function make_mask(canvas, duration=1000, height=20, width=20, dot_duration=20){
   var ctx = canvas.getContext('2d');
   // turn of directions
-  $('#trial_text').html("");
+  $('#trial_text').html('<div style="color:#808080"></br>(please wait)</div>');
   
   // how many times does the mask flicker on and off?
   var n_squares = duration / dot_duration;
