@@ -3,16 +3,28 @@ canvas {
   margin-left: auto;
   display: block;
   background-color: '#A9A9A9';
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
+  position: relative;
+  /* top: 50%; */
+  /* transform: translate(0, -50%); */
 } 
+
+#task_display {
+  display: block;
+  height: auto;
+}
 
 #task_box {
   border: 1px solid black; 
   position: absolute;
-  top: 50%;
+  display: block;
+  top: 0%;
   transform: translate(0, -50%);
+}
+
+#probe_box_container {
+  border: 1px solid black; 
+  position: relative;
+  display: block;
 }
 
 body {
@@ -67,17 +79,6 @@ color: #ccccff;
   position:relative;
 }
 
-#trial_text_container {
-  position: absolute;
-  top: 0; /* Header Height */
-  bottom: 0; /* Footer Height */
-  left: 0;
-  right: 0;
-  padding: 2.5% 50px 50px 50px;
-  border: 18px solid #f3f3f3;
-  background: white;
-}
-
 /* ad.html  - the ad that people view first */
 #adlogo {
   float: right;
@@ -100,18 +101,7 @@ line-height: 1.1em;
 }
 
 
-#trial_text {
-  margin: 0 auto;
-  width: 500px;
-  text-align: center;
-  line-height: 25px;
-  height: 85px;
-  display: block;
-  /* font-size: 14pt; */
-  /* line-height: 1.1em; */
-}
-
-#trial_text_instructions {
+#instructions_text {
   margin: 0 auto;
   width: 500px;
   text-align: justify;
@@ -119,22 +109,59 @@ line-height: 1.1em;
   height: 400px;
   display: block;
   font-size: 13pt;
+  /* line-height: 1.1em; */
+}
+
+#instructions_header {
+  margin: 0 auto;
+  width: 500px;
+  text-align: center;
+  line-height: 25px;
+  height: auto;
+  display: block;
+  font-size: 13pt;
   /*line-height: 1.1em;*/
 }
 
-#experiment {
-  border: 4px;
-  display: block;
-}
-
-#trial_text_bottom {
-  border: 1px solid black; 
+#instructions_bottom {
+  /* border: 1px solid black;  */
   margin: 0 auto;
   width: 500px;
   text-align: center;
   line-height: 25px;
   height: 85px;
-  /* position: relative; */
+  position: relative;
+  display: block;
+  /*font-size: 11pt;*/
+  /*line-height: 1.1em;*/
+}
+
+#trial_text {
+  margin: 0 auto;
+  width: 500px;
+  text-align: center;
+  line-height: 25px;
+  height: 400px;
+  display: block;
+  font-size: 13pt;
+  /* line-height: 1.1em; */
+}
+
+#experiment {
+  border: 4px;
+  height: auto;
+  display: block;
+  position: relative;
+}
+
+#trial_text_bottom {
+  /* border: 1px solid black;  */
+  margin: 0 auto;
+  width: 500px;
+  text-align: center;
+  line-height: 25px;
+  height: 85px;
+  position: relative;
   display: block;
   /*font-size: 11pt;*/
   /*line-height: 1.1em;*/
