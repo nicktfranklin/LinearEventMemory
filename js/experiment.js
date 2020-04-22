@@ -30,6 +30,7 @@ function load_instructions_2() {
 }
 
 function start_block_one() {
+  console.log(posX_probe);
   load_page('./static/templates/canvas_stage.html', function () {
     run_block(block_1_trials)
   })
@@ -50,14 +51,3 @@ function show_break() {
 
     document.getElementById('previous').onclick = show_instruction_2;
 }
-
-
-
-function start_experiment() {
-  show_instruction_1();
-  // load_page('./static/templates/instructions_intro.html', function() {});
-  // run_block(block_1_trials);
-  // for now, the experiment just runs the first block of trials
-  ;
-}
-

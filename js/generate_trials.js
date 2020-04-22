@@ -20,8 +20,22 @@ var p = 0.25
 var t_max = 8;
 var t_min = 2;
 
-var json_file = $.getJSON('./trial_parameters.json');
-console.log(json_file);
+// load the probe trials!
+
+// console.log(probe_trials);
+var probe_trials;
+var posX_probe = [];
+var posY_probe = [];
+
+
+var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
+    probe_trials = data;
+    for (ii = 0; ii < 8; ii ++) {
+      posX_probe[ii] = probe_trials[ii].posX;
+      posY_probe[ii] = probe_trials[ii].posY;
+    }
+});
+  
 
 
 function generate_trial_parameters(
