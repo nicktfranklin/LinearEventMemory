@@ -5,8 +5,13 @@ canvas {
   background-color: '#A9A9A9';
 } 
 
+#probe_box{
+  display: block;
+}
+
 #task_box {
   border: 1px solid black; 
+  display: block;
 }
 
 body {
