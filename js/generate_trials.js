@@ -20,6 +20,10 @@ var p = 0.25
 var t_max = 8;
 var t_min = 2;
 
+var json_file = $.getJSON('./trial_parameters.json');
+console.log(json_file);
+
+
 function generate_trial_parameters(
   A_l, process_init, process_noise, observ_noise, observ_scale) {
     var duration = truncated_geometric(p, t_max) + t_min;;
@@ -65,9 +69,10 @@ function run_block(queue_trials) {
   if (queue_trials.length == 0) {
     $('#trial_text').html('Great! You have finished the game!<br>Please click "continue"');
     $('#trial_text_bottom').html(
-      '<div class="col-xs-3"><button type="button" id="next" value="next" '
+      '<div class="instructionsnav"><div class="row"><div class="col-xs-2"></div><div class="col-xs-7"></div>'
+      + '<div class="col-xs-3"><div class="right"><button type="button" id="next" value="next" '
       + 'class="btn btn-primary btn-lg continue"> Continue '
-      + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
+      + '<span class="glyphicon glyphicon-arrow-right"></span></button></div></div></div></div>');
       document.getElementById('next').onclick = run_block; 
   } else {
     // function takes in a set of parameters and creates the trial
@@ -86,8 +91,8 @@ function run_block(queue_trials) {
     // define an object to contain the properties of a
     // the cues
     var props = new Object();
-    props.width = 20;
-    props.height = 20;
+    props.width = 25;
+    props.height = 25;
     props.duration = dot_duration; // in ms
 
     // define an object to contain the properties

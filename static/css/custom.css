@@ -109,11 +109,12 @@ line-height: 1.1em;
 
 #trial_text_bottom {
   /* border: 1px solid black;  */
+  display: block;
   margin: 0 auto;
   width: 500px;
   text-align: center;
   line-height: 25px;
-  height: 85px;
+  height: 100px;
   /*font-size: 11pt;*/
   /*line-height: 1.1em;*/
 }
