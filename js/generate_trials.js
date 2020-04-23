@@ -35,7 +35,6 @@ var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
       posY_probe[ii] = probe_trials[ii].posY;
     }
 });
-  
 
 
 function generate_trial_parameters(
@@ -76,17 +75,47 @@ for (var ii=0; ii < n_trials; ii ++){
   };
 
 
+
+function right_naviagtion_button(button_label) {
+  var html = 
+  '<button type="button" id="next" value="next" class="btn btn-primary btn-lg continue">'
+  + button_label
+  + '<span class="glyphicon glyphicon-arrow-right"></span>'
+  + '</button>'
+  return html
+};
+
+function clear_buttons() {
+  $('#button_right').html("")
+};
+
+
+
 // function to run a block of trials
 function run_block(queue_trials) {
 
   // end condition => no trials left in the queue.
   if (queue_trials.length == 0) {
     $('#trial_text').html('Great! You have finished the game!<br>Please click "continue"');
-    $('#trial_text_bottom').html(
-      '<div class="instructionsnav"><div class="row"><div class="col-xs-2"></div><div class="col-xs-7"></div>'
-      + '<div class="col-xs-3"><div class="right"><button type="button" id="next" value="next" '
-      + 'class="btn btn-primary btn-lg continue"> Continue '
-      + '<span class="glyphicon glyphicon-arrow-right"></span></button></div></div></div></div>');
+
+    // $('#trial_text_bottom').html(''
+    // +'  <div id="trial_text_bottom">'
+    //   + '<div class="instructionsnav">'
+    //   + '<div class="row">'
+    //   +   '<div class="col-xs-2"></div>'
+    //   +   '<div class="col-xs-7"></div>'
+    //   +   '<div class="col-xs-3">'
+    //   +     '<div class="right">'
+    //   +       '<button type="button" id="next" value="next" class="btn btn-primary btn-lg continue">' 
+    //   +         'Continue <span class="glyphicon glyphicon-arrow-right"></span>'
+    //   +       '</button>'
+    //   +     '</div>'
+    //   +   '</div>'
+    //   +'</div></div>'
+    //   );
+    // $('#button_right').html(make_right_button("Next Trial"))
+    // add_right_navigation_button('Continue');
+    $('#button_right').html(right_naviagtion_button('Continue'));
       document.getElementById('next').onclick = run_block; 
   } else {
     // function takes in a set of parameters and creates the trial
@@ -136,7 +165,7 @@ function run_block(queue_trials) {
       function iti(){
         var display = "<br>Remember all of these squares!<br>";
         $('#trial_text').html(display);
-        $('#trial_text_bottom').html('');
+        $('#button_right').html("");
 
         iti_counter++;
         if (iti_counter < 3){
@@ -153,7 +182,7 @@ function run_block(queue_trials) {
       function animate_sequence(){
         var display = "<br>Remember all of these squares!<br>";
         $('#trial_text').html(display);
-        $('#trial_text_bottom').html('');
+        $('#button_right').html('');
         ctx_task.clearRect(0,0,500,500);
 
         props.posX = trial_parameters.posX[i];
@@ -238,12 +267,15 @@ function run_block(queue_trials) {
           ctx_probe.clearRect(0,0,20,20);
 
           // add a button at the end to go to the next trial
-          $('#trial_text_bottom').html(
-            '<div class="col-xs-3"><button type="button" id="next" value="next" '
-            + 'class="btn btn-primary btn-lg continue"> Next Trial '
-            + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
-            document.getElementById('next').onclick = function(){run_block(queue_trials);}; // click listener
-            // call run_all_trials to advance to the next trial or end
+          var button = right_naviagtion_button('Next Trial')
+          $('#button_right').html(button);
+          // $('#trial_text_bottom').html(
+            // '<div class="col-xs-3"><button type="button" id="next" value="next" '
+            // + 'class="btn btn-primary btn-lg continue"> Next Trial '
+            // + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
+          
+          document.getElementById('next').onclick = function(){run_block(queue_trials);}; // click listener
+          // call run_all_trials to advance to the next trial or end
 
         } else {
           // if trial is continuing
