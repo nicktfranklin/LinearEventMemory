@@ -85,38 +85,19 @@ function right_naviagtion_button(button_label) {
   return html
 };
 
-function clear_buttons() {
-  $('#button_right').html("")
-};
-
-
-
 // function to run a block of trials
 function run_block(queue_trials) {
 
   // end condition => no trials left in the queue.
   if (queue_trials.length == 0) {
-    $('#trial_text').html('Great! You have finished the game!<br>Please click "continue"');
+    var display = 'Great! You have finished the game!<br>Please click "continue"';
+    var button = right_naviagtion_button('Continue');
 
-    // $('#trial_text_bottom').html(''
-    // +'  <div id="trial_text_bottom">'
-    //   + '<div class="instructionsnav">'
-    //   + '<div class="row">'
-    //   +   '<div class="col-xs-2"></div>'
-    //   +   '<div class="col-xs-7"></div>'
-    //   +   '<div class="col-xs-3">'
-    //   +     '<div class="right">'
-    //   +       '<button type="button" id="next" value="next" class="btn btn-primary btn-lg continue">' 
-    //   +         'Continue <span class="glyphicon glyphicon-arrow-right"></span>'
-    //   +       '</button>'
-    //   +     '</div>'
-    //   +   '</div>'
-    //   +'</div></div>'
-    //   );
-    // $('#button_right').html(make_right_button("Next Trial"))
-    // add_right_navigation_button('Continue');
-    $('#button_right').html(right_naviagtion_button('Continue'));
-      document.getElementById('next').onclick = run_block; 
+    $('#trial_text').html(display);
+    $('#button_right').html(button);
+
+    document.getElementById('next').onclick = run_block; 
+
   } else {
     // function takes in a set of parameters and creates the trial
     trial_parameters = queue_trials.shift();
