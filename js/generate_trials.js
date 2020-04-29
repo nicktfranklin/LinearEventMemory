@@ -39,8 +39,8 @@ function generate_trial_parameters(A_l, process_init, process_noise, observ_nois
 // generate a list of trials of each type, and insert the probe trials into the two conditions.
 // [code goes here]
 
-var n_trials = 2; // number of trials per block
-var n_probes = 1; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var n_trials = 25; // number of trials per block
+var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
 var probe_trials = [];
 
 var block_l1_trials = [];
