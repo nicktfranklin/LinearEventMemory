@@ -29,25 +29,21 @@ function load_instructions_2() {
   });
 }
 
+function load_break_screen(page, next_block) {
+  load_page(page, function() {
+    $('#score').html('<div id="score">51</div>')
+    document.getElementById('next').onclick =  function(){
+      run_block(next_block);
+    };
+  });
+}
+
 function start_block_one() {
-  console.log(posX_probe);
   load_page('./static/templates/canvas_stage.html', function () {
-    run_block(block_1_trials)
+    run_block(block_l1_trials, function() {
+      load_break_screen('./static/templates/break_one.html', block_h1_trials);
+    });
   })
 }
 
-function show_break() {
-  var text = '<h1>Section Complete!</h1></br>'
-  var text = text+ '</br></br></br></br>'
-  var text = text+ '<div class="col-xs-3"><button type="button" id="next" value="next" '
-  + 'class="btn btn-primary btn-lg continue"> Continue '
-  + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>';
-  $('#trial_text').html(text);
 
-    document.getElementById('next').onclick =  function(){
-      stage_exp();
-      run_block(block_1_trials);
-    };
-
-    document.getElementById('previous').onclick = show_instruction_2;
-}

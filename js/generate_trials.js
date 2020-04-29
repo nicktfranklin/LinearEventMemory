@@ -20,26 +20,8 @@ var p = 0.25
 var t_max = 8;
 var t_min = 2;
 
-// load the probe trials!
-
-// console.log(probe_trials);
-var probe_trials;
-var posX_probe = [];
-var posY_probe = [];
-
-
-var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
-    probe_trials = data;
-    for (ii = 0; ii < 8; ii ++) {
-      posX_probe[ii] = probe_trials[ii].posX;
-      posY_probe[ii] = probe_trials[ii].posY;
-    }
-});
-
-
-function generate_trial_parameters(
-  A_l, process_init, process_noise, observ_noise, observ_scale) {
-    var duration = truncated_geometric(p, t_max) + t_min;;
+function generate_trial_parameters(A_l, process_init, process_noise, observ_noise, observ_scale) {
+    var duration = truncated_geometric(p, t_max - t_min) + t_min;;
     var x = sample_lds_states(A_l, process_init, process_noise, duration);
     var z = make_observations(x, observ_noise, observ_scale);
     
@@ -50,30 +32,88 @@ function generate_trial_parameters(
       posX.push(z[ii][0] + 350/2);
       posY.push(z[ii][1] + 350/2);
     }
-    return {posX : posX, posY: posY,  color_sequence: palette('tol', z.length)}
+    return {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
   };
 
 
 // generate a list of trials of each type, and insert the probe trials into the two conditions.
 // [code goes here]
 
-var n_trials = 25; // number of trials per block
-var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var n_trials = 2; // number of trials per block
+var n_probes = 1; // these are the number of unique probe trials (subject sees the twice across four blocks)
 var probe_trials = [];
 
-var block_1_trials = [];
-var block_2_trials = [];
-var block_3_trials = [];
-var block_4_trials = [];
+var block_l1_trials = [];
+var block_l2_trials = [];
+var block_h1_trials = [];
+var block_h2_trials = [];
 
+
+// randomly sample trial from the distributions
 for (var ii=0; ii < n_trials; ii ++){ 
-  block_1_trials.push(
+  
+  // sample block l1
+  block_l1_trials.push(
       generate_trial_parameters(
         A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
         )
     )
-  };
 
+  // sample block l2
+  block_l2_trials.push(
+    generate_trial_parameters(
+      A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+      )
+  )
+  
+  // sample block h1
+  block_h1_trials.push(
+    generate_trial_parameters(
+      A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+      )
+  )
+
+  // sample block l2
+  block_h2_trials.push(
+    generate_trial_parameters(
+      A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+      )
+  )
+};
+
+// interleave the probe trials with the block trials.  This
+// needs to be a function call b/c it has to be evaluated 
+// after the success of $.getJSON call
+function interleave_probes(block_trials, probe_trials){
+  var new_block = [];
+  
+
+
+}
+
+// load pre-sampled probe trials from file
+  var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
+    var posX;
+    var posY;
+    var temp_probes = [];
+    for (var ii = 0; ii < data.length; ii ++) {
+      posX = data[ii].posX;
+      posY = data[ii].posY;
+      temp_probes[ii] = {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
+    }
+
+    // randomly re-order the array;
+    var index = new Array(data.length);
+    for (var ii = 0; ii < data.length; ii ++) {index[ii] = ii};
+    shuffle(index);
+    var p
+    for (var ii = 0; ii < data.length; ii ++) {
+      probe_trials[ii] = temp_probes[index[ii]];
+    }
+  });
+
+
+// add probe trials to the end of the 
 
 
 function right_naviagtion_button(button_label) {
@@ -85,20 +125,24 @@ function right_naviagtion_button(button_label) {
   return html
 };
 
+/************************
+* Experiment Parameters *
+*************************/
+// for clarity, these are seperate from the code to advance a trial 
+// default parameters
+var dot_duration = 500;
+var mask_duration = 500;
+var canvas_size = 350;
+var isi = 500;
+// 
+var sequence_time = dot_duration * trial_parameters.posX.length;
 // function to run a block of trials
-function run_block(queue_trials) {
+function run_block(queue_trials, end_function) {
+  console.log(end_function);
+  var block_total_score = 0;
 
   // end condition => no trials left in the queue.
-  if (queue_trials.length == 0) {
-    var display = 'Great! You have finished the game!<br>Please click "continue"';
-    var button = right_naviagtion_button('Continue');
-
-    $('#trial_text').html(display);
-    $('#button_right').html(button);
-
-    document.getElementById('next').onclick = run_block; 
-
-  } else {
+  if (queue_trials.length > 0) {
     // function takes in a set of parameters and creates the trial
     trial_parameters = queue_trials.shift();
 
@@ -244,6 +288,7 @@ function run_block(queue_trials) {
           + '<span style="font-size:115%"><span style="font-weight: bold">'
           + String(Math.max(Math.round(total_score),0)) + '</span></span> /100!';
 
+          block_total_score += Math.max(Math.round(total_score),0);
           // remove the final probe 
           ctx_probe.clearRect(0,0,20,20);
 
@@ -255,7 +300,7 @@ function run_block(queue_trials) {
             // + 'class="btn btn-primary btn-lg continue"> Next Trial '
             // + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
           
-          document.getElementById('next').onclick = function(){run_block(queue_trials);}; // click listener
+          document.getElementById('next').onclick = function(){run_block(queue_trials, end_function);}; // click listener
           // call run_all_trials to advance to the next trial or end
 
         } else {
@@ -279,6 +324,8 @@ function run_block(queue_trials) {
     }
 
     setTimeout(add_listener, sequence_time + isi + mask_duration + isi);
+  } else {
+    end_function()
   }
 }
 
