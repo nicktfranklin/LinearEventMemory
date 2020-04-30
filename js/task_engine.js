@@ -1,3 +1,17 @@
+/************************
+* LDS Parameters *
+*************************/
+
+var n_trials = 25; // number of trials per block
+var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
+
+// Common LDS parameters
+var observ_noise = 10.0
+var observ_scale = 20.0
+var p = 0.25
+var t_max = 8;
+var t_min = 2;
+
 // the recency bias (low noise) condition
 var A_l = [[ 1.08561432 , 0.23139049], [-0.23139049,  1.08561432]];
 var process_init_l = 3.5;
@@ -8,18 +22,12 @@ var A_h = [[ 0.89887523,  0.04498125], [-0.04498125,  0.89887523]];
 var process_init_h = 6.0;
 var process_noise_h = 1.0;
 
-// the test condition
-var A_test = [[ 1.0358622 , 0.17172509], [-0.17172509,  1.0358622]];
-var process_init_test = 3.71428571;
-var process_noise_test = 0.29714286;
+// a set of probe trials (or test condition) has been pre-drawn and will
+// be loaded from file.  We sub-sample a set of these
 
-
-var observ_noise = 10.0
-var observ_scale = 20.0
-var p = 0.25
-var t_max = 8;
-var t_min = 2;
-
+/************************
+* LDS Sampler *
+*************************/
 function generate_trial_parameters(A_l, process_init, process_noise, observ_noise, observ_scale) {
     var duration = truncated_geometric(p, t_max - t_min) + t_min;;
     var x = sample_lds_states(A_l, process_init, process_noise, duration);
@@ -39,15 +47,12 @@ function generate_trial_parameters(A_l, process_init, process_noise, observ_nois
 // generate a list of trials of each type, and insert the probe trials into the two conditions.
 // [code goes here]
 
-var n_trials = 25; // number of trials per block
-var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
-var probe_trials = [];
 
+var probe_trials = [];
 var block_l1_trials = [];
 var block_l2_trials = [];
 var block_h1_trials = [];
 var block_h2_trials = [];
-
 
 // randomly sample trial from the distributions
 for (var ii=0; ii < n_trials; ii ++){ 
@@ -65,14 +70,12 @@ for (var ii=0; ii < n_trials; ii ++){
       A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
       )
   )
-  
   // sample block h1
   block_h1_trials.push(
     generate_trial_parameters(
       A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
       )
   )
-
   // sample block l2
   block_h2_trials.push(
     generate_trial_parameters(
@@ -93,6 +96,8 @@ function interleave_probes(block_trials, probe_trials){
 
 // load pre-sampled probe trials from file
   var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
+
+    // take in the JSON data and pass to local variables
     var posX;
     var posY;
     var temp_probes = [];
@@ -102,7 +107,7 @@ function interleave_probes(block_trials, probe_trials){
       temp_probes[ii] = {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
     }
 
-    // randomly re-order the array;
+    // randomly re-order the array; pass to global variable "probe_trials"
     var index = new Array(data.length);
     for (var ii = 0; ii < data.length; ii ++) {index[ii] = ii};
     shuffle(index);
@@ -126,18 +131,23 @@ function right_naviagtion_button(button_label) {
 };
 
 /************************
-* Experiment Parameters *
+* Display Parameters *
 *************************/
+
 // for clarity, these are seperate from the code to advance a trial 
 // default parameters
 var dot_duration = 500;
 var mask_duration = 500;
 var canvas_size = 350;
 var isi = 500;
-var iti_duration = 1500;
+var iti_duration = 500;
 var dot_width = 25;
 var dot_height = 25;
-// 
+
+
+/************************
+* Experiment *
+*************************/
 
 // function to run a block of trials
 function run_block(queue_trials, end_function) {
@@ -154,6 +164,7 @@ function run_block(queue_trials, end_function) {
   }
 }
 
+// function to animate a single trial
 function run_trial(trial_parameters, next) {
     
   // define an object to contain the properties of a
@@ -217,7 +228,6 @@ function run_trial(trial_parameters, next) {
         }
       }
 
-      console.log(trial_parameters.posX.length);
       
       // start the sequence by calling the recursive inner function
       next_square()
@@ -330,22 +340,19 @@ function run_trial(trial_parameters, next) {
   setTimeout(add_listener, animation_duration + iti_duration + mask_duration + isi + isi);
 };
 
+// helper functions for the trials
 
 function iti_screen(){
-  var display = "<br>Get ready for the next trial!<br>";
+  var display = "<br><br>";
   $('#trial_text').html(display);
   $('#button_right').html("");
 };
 
-function animate_stims() {
-
-};
 
 function draw_square(ctx, props){
   ctx.fillStyle = props.fillStyle;
   ctx.fillRect(props.posX, props.posY, props.width, props.height);
 };
-
 
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();

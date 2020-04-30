@@ -1,6 +1,6 @@
 
 
-// helper function
+// helper functions
 function load_page(page, callback) {
   $('#container-exp').load(page, function(responseTxt, statusTxt, xhr){
    if(statusTxt == "success")
@@ -10,40 +10,67 @@ function load_page(page, callback) {
  });
 }
 
+function set_next_onclick(clickfunction) {
+  document.getElementById('next').onclick = clickfunction;
+};
 
-// instructions
+
+/************************
+* Experiment *
+*************************/
+
+// these functions are executed linearlly
 function load_welcome() {
-  load_page('./static/templates/instructions_intro.html', function() {
-    document.getElementById('next').onclick =  function(){
-      load_instructions_2();
-    };
-  });
+  // this call back function is called once the html is loaded...
+  var callback = function() { set_next_onclick(load_welcome2) };
+
+  // load the html, run the callback function
+  load_page('./static/templates/instructions_intro.html', callback);
 }
 
-
-function load_instructions_2() {
-  load_page('./static/templates/instructions_intro2.html', function() {
-    document.getElementById('next').onclick =  function(){
-      start_block_one();
-    };
-  });
-}
-
-function load_break_screen(page, next_block) {
-  load_page(page, function() {
-    $('#score').html('<div id="score">51</div>')
-    document.getElementById('next').onclick =  function(){
-      run_block(next_block);
-    };
-  });
+function load_welcome2() {
+  var callback = function() { set_next_onclick(start_block_one) };
+  load_page('./static/templates/instructions_intro2.html', callback);
 }
 
 function start_block_one() {
-  load_page('./static/templates/canvas_stage.html', function () {
-    run_block(block_l1_trials, function() {
-      load_break_screen('./static/templates/break_one.html', block_h1_trials);
-    });
-  })
+  // run block one, and specify the break page to be shown after
+  var callback = function() {run_block(block_l1_trials, break_one)};
+  load_page('./static/templates/canvas_stage.html', callback);
 }
 
+function break_one() {
+  var callback = function() { set_next_onclick(start_block_two) };
+  load_page('./static/templates/break_one.html', callback);
+}
 
+function start_block_two() {
+  // run block two, and specify the break page to be shown after
+  var callback = function() {run_block(block_h1_trials, break_two)};
+  load_page('./static/templates/canvas_stage.html', callback);
+}
+
+function break_two() {
+  var callback = function() { set_next_onclick(start_block_three) };
+  load_page('./static/templates/break_two.html', callback);
+}
+
+function start_block_three() {
+  // run block two, and specify the break page to be shown after
+  var callback = function() {run_block(block_l2_trials, break_three)};
+  load_page('./static/templates/canvas_stage.html', callback);
+}
+
+function break_two() {
+  var callback = function() { set_next_onclick(start_block_three) };
+  load_page('./static/templates/break_two.html', callback);
+}
+
+function start_block_four() {
+  var callback = function() {run_block(block_h2_trials, end)};
+  load_page('./static/templates/canvas_stage.html', callback);
+}
+
+function end() {
+  load_page('./static/templates/end.html', function(){});
+}
