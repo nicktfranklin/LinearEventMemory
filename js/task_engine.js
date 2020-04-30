@@ -2,8 +2,10 @@
 * LDS Parameters *
 *************************/
 
-var n_trials = 25; // number of trials per block
-var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var n_trials = 36; // number of trials per block
+var n_trials_buffer = 20; // number of trials at the begining of the block with no interleaving
+var n_probes = 8; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var n_per_block = n_trials + n_probes;
 
 // Common LDS parameters
 var observ_noise = 10.0
@@ -82,40 +84,101 @@ for (var ii=0; ii < n_trials; ii ++){
       A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
       )
   )
+
+  // label the block conditions
+  block_l1_trials[ii].condition = 'LowNoise';
+  block_l2_trials[ii].condition = 'LowNoise';
+  block_h1_trials[ii].condition = 'HighNoise';
+  block_h2_trials[ii].condition = 'HighNoise';
 };
 
 // interleave the probe trials with the block trials.  This
 // needs to be a function call b/c it has to be evaluated 
 // after the success of $.getJSON call
 function interleave_probes(block_trials, probe_trials){
-  var new_block = [];
-  
 
+  // First, we create a boolean array to indicate probe or non-probe status.
 
+  // start with the intermixed part
+  var is_probe_trial = [];
+  // this is the number of non-probe trials we are mixing in with probe trials
+  var n_trials_non_buffer= n_trials - n_trials_buffer;
+  for (var ii=0; ii < n_trials_non_buffer; ii++) {
+    is_probe_trial.push(0);
+  };
+  // add probe trials
+  for (var ii=0; ii < n_probes; ii++) {
+    is_probe_trial.push(1);
+  };
+  // randomize order
+  shuffle(is_probe_trial);
+
+  // add non-probetrials to the beginning of the block
+  for (var ii=0; ii < n_trials_buffer; ii++) {
+    is_probe_trial.unshift(0);
+  };
+
+  // create our list of trials
+  var trials_out = [];  
+  for (var ii=0; ii< is_probe_trial.length; ii++) {
+    if (is_probe_trial[ii] == 1) {
+      trials_out.push(probe_trials.shift());
+    } else {
+      trials_out.push(block_trials.shift());
+    };
+  }
+  return trials_out;
 }
 
 // load pre-sampled probe trials from file
-  var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
+var all_blocks; // these are the final list of trial blocks
+var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
 
-    // take in the JSON data and pass to local variables
-    var posX;
-    var posY;
-    var temp_probes = [];
-    for (var ii = 0; ii < data.length; ii ++) {
-      posX = data[ii].posX;
-      posY = data[ii].posY;
-      temp_probes[ii] = {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
-    }
+  // take in the JSON data and pass to local variables
+  var posX;
+  var posY;
+  var temp_probes = [];
+  for (var ii = 0; ii < data.length; ii ++) {
+    posX = data[ii].posX;
+    posY = data[ii].posY;
+    temp_probes[ii] = {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
+  }
 
-    // randomly re-order the array; pass to global variable "probe_trials"
-    var index = new Array(data.length);
-    for (var ii = 0; ii < data.length; ii ++) {index[ii] = ii};
-    shuffle(index);
-    var p
-    for (var ii = 0; ii < data.length; ii ++) {
-      probe_trials[ii] = temp_probes[index[ii]];
+  // randomly re-order the array; pass to global variable "probe_trials"
+  var index = new Array(data.length);
+  for (var ii = 0; ii < data.length; ii ++) {index[ii] = ii};
+  shuffle(index);
+
+  for (var ii = 0; ii < data.length; ii ++) {
+    probe_trials[ii] = temp_probes[index[ii]];
+    probe_trials[ii].condition = 'Probe'; // label the trial as a probe trial.
+  }
+
+  // interleave probe trials into the blocks
+  block_l1_trials = interleave_probes(block_l1_trials, probe_trials);
+  block_l2_trials = interleave_probes(block_l2_trials, probe_trials);
+  block_h1_trials = interleave_probes(block_h1_trials, probe_trials);
+  block_h2_trials = interleave_probes(block_h2_trials, probe_trials);
+
+  // add a trial number ot each block (these are within block trial numbers)
+  function add_trial_numbers(block_trials) {
+    for (var ii = 0; ii < block_trials.length; ii++) {
+      block_trials[ii].trialNumber = ii;
     }
-  });
+  }
+  add_trial_numbers(block_l1_trials);
+  add_trial_numbers(block_l2_trials);
+  add_trial_numbers(block_h1_trials);
+  add_trial_numbers(block_h2_trials);
+
+  // pick a randomized block order (either h first or l first)
+  if (0.5 < Math.random()) {
+    all_blocks = [block_l1_trials, block_h1_trials, block_l2_trials, block_h2_trials]; 
+  } else {
+    all_blocks = [block_h1_trials, block_l1_trials, block_h2_trials, block_l2_trials]; 
+  }
+
+});
 
 
 // add probe trials to the end of the 
@@ -297,8 +360,13 @@ function run_trial(trial_parameters, next) {
         // change the message at the top
         display = 
           "<br>Great! You've placed all of the dots<br>You scored " 
-        + '<span style="font-size:115%"><span style="font-weight: bold">'
-        + String(Math.max(Math.round(total_score),0)) + '</span></span> /100!';
+        + '<span style="font-size:125%"><span style="font-weight: bold">'
+        + String(Math.max(Math.round(total_score),0)) + '/100!</span></span> </br>'
+        // + '<span color="grey"><span style="font-size:85%">(Trial ' 
+        + '<div id="trial_counter">'
+        +  + String(trial_parameters.trialNumber + 1) + ' of ' + String(n_trials + n_probes)
+        + '</div>';
+        //  + '</span></span>';
 
         // remove the final probe 
         ctx_probe.clearRect(0,0,20,20);

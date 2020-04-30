@@ -212,3 +212,8 @@ padding-top: 15px;
   /*font-size: 11pt;*/
   /*line-height: 1.1em;*/
 }
+
+#trial_counter{
+  font-size: 85%;
+  color: silver;
+}

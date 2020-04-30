@@ -35,7 +35,7 @@ function load_welcome2() {
 
 function start_block_one() {
   // run block one, and specify the break page to be shown after
-  var callback = function() {run_block(block_l1_trials, break_one)};
+  var callback = function() {run_block(all_blocks[0], break_one)};
   load_page('./static/templates/canvas_stage.html', callback);
 }
 
@@ -46,7 +46,7 @@ function break_one() {
 
 function start_block_two() {
   // run block two, and specify the break page to be shown after
-  var callback = function() {run_block(block_h1_trials, break_two)};
+  var callback = function() {run_block(all_blocks[1], break_two)};
   load_page('./static/templates/canvas_stage.html', callback);
 }
 
@@ -57,7 +57,7 @@ function break_two() {
 
 function start_block_three() {
   // run block two, and specify the break page to be shown after
-  var callback = function() {run_block(block_l2_trials, break_three)};
+  var callback = function() {run_block(all_blocks[2], break_three)};
   load_page('./static/templates/canvas_stage.html', callback);
 }
 
@@ -67,7 +67,7 @@ function break_two() {
 }
 
 function start_block_four() {
-  var callback = function() {run_block(block_h2_trials, end)};
+  var callback = function() {run_block(all_blocks[3], end)};
   load_page('./static/templates/canvas_stage.html', callback);
 }
 
