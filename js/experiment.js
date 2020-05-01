@@ -40,8 +40,16 @@ function start_block_one() {
 }
 
 function break_one() {
-  var callback = function() { set_next_onclick(start_block_two) };
+  var callback = function() { 
+    $('#score').html('<div id="score">Y</div>');
+    set_next_onclick(break_one_b) 
+  };
   load_page('./static/templates/break_one.html', callback);
+}
+
+function break_one_b() {
+  var callback = function() { set_next_onclick(start_block_two) };
+  load_page('./static/templates/break_one_b.html', callback);
 }
 
 function start_block_two() {
@@ -51,8 +59,18 @@ function start_block_two() {
 }
 
 function break_two() {
-  var callback = function() { set_next_onclick(start_block_three) };
+  var callback = function() { 
+    $('#score').html('<div id="score">Y</div>');
+    set_next_onclick(break_two_b) 
+  };
   load_page('./static/templates/break_two.html', callback);
+}
+
+function break_two_b() {
+  var callback = function() { 
+    set_next_onclick(start_block_three) 
+  };
+  load_page('./static/templates/break_two_b.html', callback);
 }
 
 function start_block_three() {
@@ -61,9 +79,19 @@ function start_block_three() {
   load_page('./static/templates/canvas_stage.html', callback);
 }
 
-function break_two() {
-  var callback = function() { set_next_onclick(start_block_three) };
+function break_three() {
+  var callback = function() { 
+    $('#score').html('<div id="score">Y</div>');
+    set_next_onclick(break_three_b) 
+  };
   load_page('./static/templates/break_two.html', callback);
+}
+
+function break_three_b() {
+  var callback = function() { 
+    set_next_onclick(start_block_four) 
+  };
+  load_page('./static/templates/break_two_b.html', callback);
 }
 
 function start_block_four() {
