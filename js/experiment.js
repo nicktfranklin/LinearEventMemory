@@ -117,5 +117,24 @@ function start_block_four() {
 function end() {
   load_page('./static/templates/instructions/end.html', function(){
     make_score_string();
+    load_questionaire_1();
   });
 }
+
+function load_questionaire_1() {
+  // this call back function is called once the html is loaded...
+  load_page('./static/templates/questionnaires/questionnaire-demographics.html', function(){
+    set_next_onclick(load_questionaire_2)
+  });
+}
+
+function load_questionaire_2() {
+  // this call back function is called once the html is loaded...
+  load_page('./static/templates/questionnaires/questionnaire-task.html', function(){
+    set_next_onclick(finish)
+  });
+}
+
+function finish(){
+  $('#container-exp').html('Experiment Complete!')
+};
