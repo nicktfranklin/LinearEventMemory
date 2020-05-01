@@ -2,9 +2,9 @@
 * LDS Parameters *
 *************************/
 
-var n_trials = 36; // number of trials per block
-var n_trials_buffer = 20; // number of trials at the begining of the block with no interleaving
-var n_probes = 8; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var n_trials = 5; // number of trials per block
+var n_trials_buffer = 1; // number of trials at the begining of the block with no interleaving
+var n_probes = 3; // these are the number of unique probe trials (subject sees the twice across four blocks)
 var n_per_block = n_trials + n_probes;
 
 // Common LDS parameters
@@ -44,11 +44,6 @@ function generate_trial_parameters(A_l, process_init, process_noise, observ_nois
     }
     return {posX : posX, posY: posY,  color_sequence: palette('tol', t_max + 1)}
   };
-
-
-// generate a list of trials of each type, and insert the probe trials into the two conditions.
-// [code goes here]
-
 
 var probe_trials = [];
 var block_l1_trials = [];
@@ -213,8 +208,8 @@ var dot_height = 25;
 *************************/
 
 // function to run a block of trials
+var block_total_score; // this global variable will track all of the scores in the block
 function run_block(queue_trials, end_function) {
-  // var block_total_score = 0;
 
   // end condition => no trials left in the queue.
   if (queue_trials.length > 0) {
@@ -304,7 +299,7 @@ function run_trial(trial_parameters, next) {
   
 
   // The click listener detects where the dots have been placed
-  var total_score = 0;
+  var trial_score = 0;
   function add_listener() {
     
     var dots_remaining = trial_parameters.posX.length;
@@ -349,8 +344,8 @@ function run_trial(trial_parameters, next) {
         Math.pow((props.posX - trial_parameters.posX[i-1])/(canvas_size/4), 2) + 
         Math.pow((props.posY - trial_parameters.posY[i-1])/(canvas_size/4), 2);
       
-      // total_score is an average over the trials
-      total_score += (1-squared_error*2)*100 / trial_parameters.posX.length;
+      // trial_score is an average over a single trial
+      trial_score += (1-squared_error)*100 / trial_parameters.posX.length;
 
       // cancel condition for the listener
       if (dots_remaining <= 0) {
@@ -361,24 +356,23 @@ function run_trial(trial_parameters, next) {
         display = 
           "<br>Great! You've placed all of the dots<br>You scored " 
         + '<span style="font-size:125%"><span style="font-weight: bold">'
-        + String(Math.max(Math.round(total_score),0)) + '/100!</span></span> </br>'
-        // + '<span color="grey"><span style="font-size:85%">(Trial ' 
+        + String(Math.max(Math.round(trial_score),0)) + '/100!</span></span> </br>'
         + '<div id="trial_counter">'
         +  + String(trial_parameters.trialNumber + 1) + ' of ' + String(n_trials + n_probes)
         + '</div>';
-        //  + '</span></span>';
+
+        // update the mean score over the whole block
+        var delta = Math.max(Math.round(trial_score),0) - block_total_score;
+        var lr = 1/(trial_parameters.trialNumber + 1);
+        block_total_score = block_total_score + lr * delta;
 
         // remove the final probe 
         ctx_probe.clearRect(0,0,20,20);
 
         // add a button at the end to go to the next trial
-        var button = right_naviagtion_button('Next Trial')
+        var button = right_naviagtion_button('Next Trial ')
         $('#button_right').html(button);
-        // $('#trial_text_bottom').html(
-          // '<div class="col-xs-3"><button type="button" id="next" value="next" '
-          // + 'class="btn btn-primary btn-lg continue"> Next Trial '
-          // + '<span class="glyphicon glyphicon-arrow-right"></span></button></div>');
-        
+
         document.getElementById('next').onclick = next; // click listener
         // call run_all_trials to advance to the next trial or end
 
