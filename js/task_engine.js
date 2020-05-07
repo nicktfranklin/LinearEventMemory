@@ -155,17 +155,6 @@ var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
   block_h1_trials = interleave_probes(block_h1_trials, probe_trials);
   block_h2_trials = interleave_probes(block_h2_trials, probe_trials);
 
-  // add a trial number ot each block (these are within block trial numbers)
-  function add_trial_numbers(block_trials) {
-    for (var ii = 0; ii < block_trials.length; ii++) {
-      block_trials[ii].trialNumber = ii;
-    }
-  }
-  add_trial_numbers(block_l1_trials);
-  add_trial_numbers(block_l2_trials);
-  add_trial_numbers(block_h1_trials);
-  add_trial_numbers(block_h2_trials);
-
   // pick a randomized block order (either h first or l first)
   if (0.5 < Math.random()) {
     all_blocks = [block_l1_trials, block_h1_trials, block_l2_trials, block_h2_trials]; 
@@ -173,6 +162,16 @@ var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
     all_blocks = [block_h1_trials, block_l1_trials, block_h2_trials, block_l2_trials]; 
   }
 
+  // add a trial numbers (these are overall trial numbers)
+  function add_trial_numbers(block_trials, block=0) {
+    for (var ii = 0; ii < block_trials.length; ii++) {
+      block_trials[ii].block = block;
+      block_trials[ii].trialNumber = ii + block * n_per_block;
+    }
+  }
+  for (var ii =0; ii < 4; ii ++ ){
+    add_trial_numbers(all_blocks[ii], block=ii);
+  }
 });
 
 
@@ -251,6 +250,9 @@ function run_trial(trial_parameters, next) {
   var canvas = document.getElementById('task_box');
   var canvas_probe = document.getElementById('probe_box');
 
+  // Store the data
+
+
   if (canvas.getContext) {
     var ctx_task = canvas.getContext('2d');
     var ctx_probe = canvas_probe.getContext('2d');
@@ -318,6 +320,9 @@ function run_trial(trial_parameters, next) {
     
     // this click listener handles placing the dots on the canvas 
     canvas.addEventListener('click', function clickListener(evt) {
+      
+      var rt = new Date().getTime() - trial_on; // record the reaction time.
+      
       // increment/decrement counters
       dots_remaining--;
       dots_placed.n++;
@@ -346,6 +351,17 @@ function run_trial(trial_parameters, next) {
       
       // trial_score is an average over a single trial
       trial_score += (1-squared_error)*100 / trial_parameters.posX.length;
+
+      // store the response data
+      var response_data = {
+        'posX': trial_parameters.posX[dots_placed.n -1],
+        'posY': trial_parameters.posY[dots_placed.n -1],
+        'posX Response': props.posX,
+        'posY Response': props.posX,
+        'rt': rt,
+        'condition': trial_parameters.condition,
+        'block': trial_parameters.block,
+      };
 
       // cancel condition for the listener
       if (dots_remaining <= 0) {
@@ -377,7 +393,7 @@ function run_trial(trial_parameters, next) {
         // call run_all_trials to advance to the next trial or end
 
       } else {
-        // if trial is continuing
+        // Code for when trial is continuing
 
         // update the message at the top
         display = "<br>Place the dots on the screen, in the order in which you saw them."
@@ -400,6 +416,9 @@ function run_trial(trial_parameters, next) {
   setTimeout(animate_sequence, iti_duration);
   setTimeout(make_mask, animation_duration + iti_duration + isi, canvas, mask_duration);
   setTimeout(add_listener, animation_duration + iti_duration + mask_duration + isi + isi);
+
+  // store trial on time (starting from when they can click) to get reaction time
+  trial_on = new Date().getTime() + animation_duration + iti_duration + mask_duration + isi + isi;
 };
 
 // helper functions for the trials
