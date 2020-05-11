@@ -264,7 +264,7 @@ function run_trial(trial_parameters, next) {
     // animate the squares
     function animate_sequence(){
       // prepare the stage
-      var display = "<br>Remember all of these squares!<br>";
+      var display = '<br>Remember all of these squares!<br><span style="color: grey">(cursor is off)</span>';
       $('#trial_text').html(display);
       $('#button_right').html('');
       ctx_task.clearRect(0,0,500,500);
@@ -416,6 +416,24 @@ function run_trial(trial_parameters, next) {
   setTimeout(animate_sequence, iti_duration);
   setTimeout(make_mask, animation_duration + iti_duration + isi, canvas, mask_duration);
   setTimeout(add_listener, animation_duration + iti_duration + mask_duration + isi + isi);
+
+  // hide the canvas cursor for the duration of the animation and mask
+  function hide_cursor() {
+    // canvas objects that show stim/probes
+    var canvas = document.getElementById('task_box');
+    // context.strokeStyle = none; 
+    console.log(canvas.style.cursor);
+    canvas.style.cursor = 'none';
+  }
+  function show_cursor() {
+    var canvas = document.getElementById('task_box');
+    // context.strokeStyle = none; 
+    console.log(canvas.style.cursor);
+    canvas.style.cursor = 'crosshair';
+  }
+  hide_cursor()
+  setTimeout(show_cursor, animation_duration + iti_duration + mask_duration + isi + isi);
+
 
   // store trial on time (starting from when they can click) to get reaction time
   trial_on = new Date().getTime() + animation_duration + iti_duration + mask_duration + isi + isi;
