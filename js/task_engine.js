@@ -1,10 +1,15 @@
 /************************
 * LDS Parameters *
 *************************/
+var n_trials = 4;
+var n_trials_buffer = 2;
+var n_probes = 1;
 
-var n_trials = 40; // number of trials per block
-var n_trials_buffer = 25; // number of trials at the begining of the block with no interleaving
-var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
+var mTurkID;
+
+// var n_trials = 40; // number of trials per block
+// var n_trials_buffer = 25; // number of trials at the begining of the block with no interleaving
+// var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
 var n_per_block = n_trials + n_probes;
 
 // Common LDS parameters
@@ -354,14 +359,17 @@ function run_trial(trial_parameters, next) {
 
       // store the response data
       var response_data = {
-        'posX': trial_parameters.posX[dots_placed.n -1],
-        'posY': trial_parameters.posY[dots_placed.n -1],
+        'mTurkID': mTurkID,
+        'trialNumber': trial_parameters.trialNumber,
+        'posX': Math.round(trial_parameters.posX[dots_placed.n -1] * 10) / 10,
+        'posY': Math.round(trial_parameters.posY[dots_placed.n -1] * 10) /10,
         'posX Response': props.posX,
         'posY Response': props.posX,
         'rt': rt,
         'condition': trial_parameters.condition,
         'block': trial_parameters.block,
       };
+      console.log(response_data);
 
       // cancel condition for the listener
       if (dots_remaining <= 0) {
@@ -421,14 +429,10 @@ function run_trial(trial_parameters, next) {
   function hide_cursor() {
     // canvas objects that show stim/probes
     var canvas = document.getElementById('task_box');
-    // context.strokeStyle = none; 
-    console.log(canvas.style.cursor);
     canvas.style.cursor = 'none';
   }
   function show_cursor() {
     var canvas = document.getElementById('task_box');
-    // context.strokeStyle = none; 
-    console.log(canvas.style.cursor);
     canvas.style.cursor = 'crosshair';
   }
   hide_cursor()

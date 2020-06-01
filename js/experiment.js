@@ -25,15 +25,46 @@ function make_score_string() {
 // these functions are executed linearlly
 function load_welcome() {
   // this call back function is called once the html is loaded...
-  var callback = function() { set_next_onclick(load_welcome2) };
+  var callback = function() { set_next_onclick(load_consent) };
 
   // load the html, run the callback function
-  load_page('./static/templates/instructions/instructions_intro.html', callback);
+  load_page('./static/templates/instructions/welcome.html', callback);
 }
 
-function load_welcome2() {
+function load_consent() {
+  // this call back function is called once the html is loaded...
+  var callback = function() { set_next_onclick(load_mturk_id) };
+
+  // load the html, run the callback function
+  load_page('./static/templates/instructions/consent.html', callback);
+}
+
+function load_mturk_id() {
+
+  var onclick = function() {
+    mTurkID = document.getElementById("mTurkID").value;
+    load_instructions_1();
+  }
+
+  // this call back function is called once the html is loaded...
+  var callback = function() {set_next_onclick(onclick)};
+
+  // load the html, run the callback function
+  load_page('./static/templates/questionnaires/questionnaire-mturk_id.html', callback);
+}
+
+// these functions are executed linearlly
+function load_instructions_1() {
+  // this call back function is called once the html is loaded...
+  var callback = function() { set_next_onclick(load_instructions_2) };
+
+  // load the html, run the callback function
+  load_page('./static/templates/instructions/instructions_1.html', callback);
+}
+
+function load_instructions_2() {
   var callback = function() { set_next_onclick(start_block_one) };
-  load_page('./static/templates/instructions/instructions_intro2.html', callback);
+  load_page('./static/templates/instructions/instructions_2.html', callback);
 }
 
 function start_block_one() {
@@ -115,7 +146,7 @@ function start_block_four() {
 }
 
 function end() {
-  load_page('./static/templates/instructions/end.html', function(){
+  load_page('./static/templates/instructions/after_exp_interlude.html', function(){
     make_score_string();
     load_questionaire_1();
   });
@@ -136,5 +167,5 @@ function load_questionaire_2() {
 }
 
 function finish(){
-  $('#container-exp').html('Experiment Complete!')
+  $('#container-exp').html('./static/templates/questionnaires/end.html')
 };

@@ -86,7 +86,7 @@ color: #ccccff;
 #consent {
 margin: 0 auto;
 width: 800px;
-font-size: 100%;
+font-size: 13pt;
 }
 
 .legal {
@@ -188,6 +188,17 @@ padding-top: 15px;
   font-size: 13pt;
   /* line-height: 1.1em; */
 }
+
+#instructions_well{
+  margin: 0 auto;
+  width: 500px;
+  text-align: justify;
+  line-height: 25px;
+  height: 400px;
+  display: block;
+  font-size: 13pt;
+}
+
 
 #instructions_header {
   margin: 0 auto;
