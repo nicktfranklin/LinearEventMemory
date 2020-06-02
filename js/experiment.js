@@ -191,12 +191,12 @@ function load_questionaire_2() {
         'gender': gender,
         'age': age,
         'engagement': document.getElementById("engagement").value,
-        'strategy': document.getElementById("difficulty").value,
+        'difficulty': document.getElementById("difficulty").value,
         'strategy': document.getElementById("strategy").value,
         'freeform': document.getElementById("freeform").value,
       };
 
-      $.post("post_results.php",{postresult: questionnaire, postfile: filename_questionnaire});
+      $.post("post_results.php",{postresult: JSON.stringify(questionnaire), postfile: filename_questionnaire});
       finish();
     }
   )};

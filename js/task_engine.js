@@ -199,7 +199,8 @@ function make_results_string(response_data) {
      ',' + response_data['posX'] + ',' + response_data['posY'] +
      ',' + response_data['posX Response'] + ',' + response_data['posY Response'] + 
      ',' + response_data['rt'] + ',' + response_data['condition'] + 
-     ',' + response_data['block'] + ',' + response_data['trial_score'];
+     ',' + response_data['block'] + ',' + response_data['trial_score'] +
+     '\n';
 };
 
 
