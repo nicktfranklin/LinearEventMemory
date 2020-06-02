@@ -1,8 +1,8 @@
 /************************
 * LDS Parameters *
 *************************/
-var n_trials = 4;
-var n_trials_buffer = 2;
+var n_trials = 2;
+var n_trials_buffer = 1;
 var n_probes = 1;
 
 var mTurkID;
@@ -172,6 +172,7 @@ var jqxhr = $.getJSON('./static/json/probe_trials.json', function(data) {
     for (var ii = 0; ii < block_trials.length; ii++) {
       block_trials[ii].block = block;
       block_trials[ii].trialNumber = ii + block * n_per_block;
+      block_trials[ii].trialwithinblock = ii;
     }
   }
   for (var ii =0; ii < 4; ii ++ ){
@@ -191,6 +192,16 @@ function right_naviagtion_button(button_label) {
   + '</button>'
   return html
 };
+
+
+function make_results_string(response_data) {
+  return response_data['mTurkID'] + ',' + response_data['trialNumber'] + 
+     ',' + response_data['posX'] + ',' + response_data['posY'] +
+     ',' + response_data['posX Response'] + ',' + response_data['posY Response'] + 
+     ',' + response_data['rt'] + ',' + response_data['condition'] + 
+     ',' + response_data['block'] + ',' + response_data['trial_score'];
+};
+
 
 /************************
 * Display Parameters *
@@ -368,8 +379,13 @@ function run_trial(trial_parameters, next) {
         'rt': rt,
         'condition': trial_parameters.condition,
         'block': trial_parameters.block,
+        'trial_score': 0,
       };
-      console.log(response_data);
+      if (dots_remaining == 0) {
+        response_data['trial_score'] = String(Math.max(Math.round(trial_score),0));
+      };
+      console.log(make_results_string(response_data));
+      $.post("post_results.php",{postresult: make_results_string(response_data), postfile: filename});
 
       // cancel condition for the listener
       if (dots_remaining <= 0) {
@@ -382,7 +398,7 @@ function run_trial(trial_parameters, next) {
         + '<span style="font-size:125%"><span style="font-weight: bold">'
         + String(Math.max(Math.round(trial_score),0)) + '/100!</span></span> </br>'
         + '<div id="trial_counter">'
-        +  + String(trial_parameters.trialNumber + 1) + ' of ' + String(n_trials + n_probes)
+        +  + String(trial_parameters.trialwithinblock + 1) + ' of ' + String(n_trials + n_probes)
         + '</div>';
 
         // update the mean score over the whole block

@@ -1,17 +1,18 @@
 <div id="container-questionnaire">
-    <h1>Questionaire 1</h1>
+    <h1>Questionaire</h1>
 
     <hr>
 
     <p>Thank you for your contributions to science! </br>Before you finish the HIT, please complete
-        a short voluntary survey below before finishing the experiment (click Next to Proceed) </p>
+        a short voluntary survey below before finishing the experiment
+         (click "Next" to continue) </p>
 
     <div class="instructions well">
 
-        <form id="postquiz" action="debrief" method="post">
+        <form id="postquiz">
 
             <!-- beginning of a question -->
-            <div class="row question">
+            <!-- <div class="row question">
                 <div class="col-md-7">
                     Do you favor your right hand or your left hand when writing, brushing your teeth
                     and in other daily activities?
@@ -25,7 +26,7 @@
                         <option value="DNR">I prefer not to answer</option>
                     </select>
                 </div>
-            </div>
+            </div> -->
             <!-- end of a question -->
 
             <!-- beginning of a question -->
@@ -34,9 +35,7 @@
                     What is your <b>gender</b>?
                 </div>
                 <div class="col-md-5">
-                    <textarea id="gender" name="gender" rows="1" cols="15">
-
-                    </textarea>
+                    <input type="text" name="gender" id="gender" value="" />
                 </div>
             </div>
             <!-- end of a question -->
@@ -47,9 +46,7 @@
                     What is your <b>age</b>?
                 </div>
                 <div class="col-md-5">
-                    <textarea id="age" name="age" rows="1" cols="10">
-
-                    </textarea>
+                    <input type="text" name="age" id="age" value="" />
                 </div>
             </div>
             <!-- end of a question -->

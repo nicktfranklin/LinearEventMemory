@@ -1,4 +1,12 @@
-
+// these are common variable used by task_engine.js and the code below
+var mTurkID;
+// subjID is a random id that we use to track the filenames
+var subjID = '7' + Math.random().toString().substring(3,8);
+var d = new Date();
+var filename = 'behavior_' + subjID + '_' + d.getTime() + '.csv';
+var filename_questionnaire = 'questionnaire_' + subjID + '_' + d.getTime() + '.csv';
+var gender;
+var age;
 
 // helper functions
 function load_page(page, callback) {
@@ -26,7 +34,6 @@ function make_score_string() {
 function load_welcome() {
   // this call back function is called once the html is loaded...
   var callback = function() { set_next_onclick(load_consent) };
-
   // load the html, run the callback function
   load_page('./static/templates/instructions/welcome.html', callback);
 }
@@ -40,14 +47,16 @@ function load_consent() {
 }
 
 function load_mturk_id() {
-
-  var onclick = function() {
-    mTurkID = document.getElementById("mTurkID").value;
-    load_instructions_1();
-  }
-
   // this call back function is called once the html is loaded...
-  var callback = function() {set_next_onclick(onclick)};
+  var callback = function() {set_next_onclick(
+    // once the "Next" button has been clicked, create the filename and the mTurkID
+    function() {
+      mTurkID = document.getElementById("mTurkID").value;
+      var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score';
+      $.post("post_results.php",{postresult: csv_header_string, postfile: filename});
+      load_instructions_1();
+    }
+  )};
 
   // load the html, run the callback function
   load_page('./static/templates/questionnaires/questionnaire-mturk_id.html', callback);
@@ -127,14 +136,14 @@ function break_three() {
     make_score_string();
     set_next_onclick(break_three_b) 
   };
-  load_page('./static/templates/instructions/break_two.html', callback);
+  load_page('./static/templates/instructions/break_three.html', callback);
 }
 
 function break_three_b() {
   var callback = function() { 
     set_next_onclick(start_block_four) 
   };
-  load_page('./static/templates/instructions/break_two_b.html', callback);
+  load_page('./static/templates/instructions/break_three_b.html', callback);
 }
 
 function start_block_four() {
@@ -153,19 +162,48 @@ function end() {
 }
 
 function load_questionaire_1() {
+
   // this call back function is called once the html is loaded...
-  load_page('./static/templates/questionnaires/questionnaire-demographics.html', function(){
-    set_next_onclick(load_questionaire_2)
-  });
+  var callback = function() {set_next_onclick(
+    // once the "Next" button has been clicked, create the filename and the mTurkID
+    function() {
+      gender = document.getElementById("gender").value;
+      age =  document.getElementById("gender").value;
+      // var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score';
+      // $.post("post_results.php",{postresult: csv_header_string, postfile: filename});
+      load_questionaire_2();
+    }
+  )};
+
+  // this call back function is called once the html is loaded...
+  load_page('./static/templates/questionnaires/questionnaire-demographics.html',callback);
 }
 
 function load_questionaire_2() {
   // this call back function is called once the html is loaded...
-  load_page('./static/templates/questionnaires/questionnaire-task.html', function(){
-    set_next_onclick(finish)
-  });
+  var callback = function() {set_next_onclick(
+    // once the "Next" button has been clicked, create the filename and the mTurkID
+    function() {
+
+      
+      var questionnaire = {
+        'mTurkID': mTurkID,
+        'gender': gender,
+        'age': age,
+        'engagement': document.getElementById("engagement").value,
+        'strategy': document.getElementById("difficulty").value,
+        'strategy': document.getElementById("strategy").value,
+        'freeform': document.getElementById("freeform").value,
+      };
+
+      $.post("post_results.php",{postresult: questionnaire, postfile: filename_questionnaire});
+      finish();
+    }
+  )};
+  
+  load_page('./static/templates/questionnaires/questionnaire-task.html', callback);
 }
 
 function finish(){
-  $('#container-exp').html('./static/templates/questionnaires/end.html')
+  $('#container-exp').load('./static/templates/end.html')
 };
