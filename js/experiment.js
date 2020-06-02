@@ -22,8 +22,11 @@ function set_next_onclick(clickfunction) {
   document.getElementById('next').onclick = clickfunction;
 };
 
+// function that calculate the average over an array
+const arrAvg = arr => arr.reduce((a,b) => a + b, 0) / arr.length;
+
 function make_score_string() {
-  const average_score = arr => arr.reduce((a,b) => a + b, 0) / arr.length
+  var average_score = arrAvg(block_total_score);
   $('#score').html('<div id="score">' + String(Math.round(average_score)) + ' / 100</div>');
 }
 
@@ -149,7 +152,7 @@ function break_three_b() {
 
 function start_block_four() {
   var callback = function() {
-    block_total_score = 0; // reset the score to zero
+    block_total_score = []; // reset scores array
     run_block(all_blocks[3], end)
   };
   load_page('./static/templates/canvas_stage.html', callback);

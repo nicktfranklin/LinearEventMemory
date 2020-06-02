@@ -403,7 +403,7 @@ function run_trial(trial_parameters, next) {
         + '</div>';
 
         // update the mean score over the whole block
-        block_total_score.push(score);
+        block_total_score.push(Math.max(Math.round(trial_score),0));
         // var score = Math.max(Math.round(trial_score),0) - block_total_score;
         // var lr = 1/(trial_parameters.trialNumber + 1);
         // block_total_score = block_total_score + lr * delta;
