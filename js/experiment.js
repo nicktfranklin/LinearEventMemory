@@ -52,7 +52,7 @@ function load_mturk_id() {
     // once the "Next" button has been clicked, create the filename and the mTurkID
     function() {
       mTurkID = document.getElementById("mTurkID").value;
-      var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score';
+      var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score\n';
       $.post("post_results.php",{postresult: csv_header_string, postfile: filename});
       load_instructions_1();
     }

@@ -404,7 +404,7 @@ function run_trial(trial_parameters, next) {
 
         // update the mean score over the whole block
         var delta = Math.max(Math.round(trial_score),0) - block_total_score;
-        var lr = 1/(trial_parameters.trialNumber + 1);
+        var lr = 1/(trial_parameters.trialNumber);
         block_total_score = block_total_score + lr * delta;
 
         // remove the final probe 
