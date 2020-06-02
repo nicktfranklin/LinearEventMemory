@@ -23,7 +23,8 @@ function set_next_onclick(clickfunction) {
 };
 
 function make_score_string() {
-  $('#score').html('<div id="score">' + String(Math.round(block_total_score)) + ' / 100</div>');
+  const average_score = arr => arr.reduce((a,b) => a + b, 0) / arr.length
+  $('#score').html('<div id="score">' + String(Math.round(average_score)) + ' / 100</div>');
 }
 
 /************************
@@ -79,7 +80,7 @@ function load_instructions_2() {
 function start_block_one() {
   // run block one, and specify the break page to be shown after
   var callback = function() {
-    block_total_score = 0; // reset the score to zero
+    block_total_score = []; // reset scores array
     run_block(all_blocks[0], break_one);
   };
   load_page('./static/templates/canvas_stage.html', callback);
@@ -101,7 +102,7 @@ function break_one_b() {
 function start_block_two() {
   // run block two, and specify the break page to be shown after
   var callback = function() {
-    block_total_score = 0; // reset the score to zero
+    block_total_score = []; // reset scores array
     run_block(all_blocks[1], break_two)
   };
   load_page('./static/templates/canvas_stage.html', callback);
@@ -125,7 +126,7 @@ function break_two_b() {
 function start_block_three() {
   // run block two, and specify the break page to be shown after
   var callback = function() {
-    block_total_score = 0; // reset the score to zero
+    block_total_score = []; // reset scores array
     run_block(all_blocks[2], break_three)
   };
   load_page('./static/templates/canvas_stage.html', callback);

@@ -224,7 +224,7 @@ var dot_height = 25;
 *************************/
 
 // function to run a block of trials
-var block_total_score; // this global variable will track all of the scores in the block
+var block_total_score = []; // this global variable will track all of the scores in the block
 function run_block(queue_trials, end_function) {
 
   // end condition => no trials left in the queue.
@@ -403,9 +403,10 @@ function run_trial(trial_parameters, next) {
         + '</div>';
 
         // update the mean score over the whole block
-        var delta = Math.max(Math.round(trial_score),0) - block_total_score;
-        var lr = 1/(trial_parameters.trialNumber);
-        block_total_score = block_total_score + lr * delta;
+        block_total_score.push(score);
+        // var score = Math.max(Math.round(trial_score),0) - block_total_score;
+        // var lr = 1/(trial_parameters.trialNumber + 1);
+        // block_total_score = block_total_score + lr * delta;
 
         // remove the final probe 
         ctx_probe.clearRect(0,0,20,20);
