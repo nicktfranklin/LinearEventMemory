@@ -173,6 +173,7 @@ function load_questionaire_1() {
   var callback = function() {set_next_onclick(
     // once the "Next" button has been clicked, create the filename and the mTurkID
     function() {
+      end_time = d.getTime();
       gender = document.getElementById("gender").value;
       age =  document.getElementById("gender").value;
       // var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score';
@@ -200,7 +201,9 @@ function load_questionaire_2() {
         'difficulty': document.getElementById("difficulty").value,
         'strategy': document.getElementById("strategy").value,
         'freeform': document.getElementById("freeform").value,
-        'timeElapsed': d.getTime() - time_start,
+        'startTime': time_start,
+        'endTime': end_time,
+        // 'timeElapsed': d.getTime() - time_start,
       };
 
       $.post("post_results.php",{postresult: JSON.stringify(questionnaire), postfile: filename_questionnaire});

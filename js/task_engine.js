@@ -1,8 +1,8 @@
 /************************
 * LDS Parameters *
 *************************/
-var n_trials = 2;
-var n_trials_buffer = 1;
+var n_trials = 1;
+var n_trials_buffer = 0;
 var n_probes = 1;
 
 var mTurkID;
