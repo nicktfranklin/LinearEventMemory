@@ -1,15 +1,15 @@
 /************************
 * LDS Parameters *
 *************************/
-// var n_trials = 2;
-// var n_trials_buffer = 1;
-// var n_probes = 1;
+var n_trials = 2;
+var n_trials_buffer = 1;
+var n_probes = 1;
 
 var mTurkID;
 
-var n_trials = 40; // number of trials per block
-var n_trials_buffer = 25; // number of trials at the begining of the block with no interleaving
-var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
+// var n_trials = 40; // number of trials per block
+// var n_trials_buffer = 25; // number of trials at the begining of the block with no interleaving
+// var n_probes = 10; // these are the number of unique probe trials (subject sees the twice across four blocks)
 var n_per_block = n_trials + n_probes;
 
 // Common LDS parameters
@@ -374,9 +374,9 @@ function run_trial(trial_parameters, next) {
         'mTurkID': mTurkID,
         'trialNumber': trial_parameters.trialNumber,
         'posX': Math.round(trial_parameters.posX[dots_placed.n -1] * 10) / 10,
-        'posY': Math.round(trial_parameters.posY[dots_placed.n -1] * 10) /10,
+        'posY': Math.round(trial_parameters.posY[dots_placed.n -1] * 10) / 10,
         'posX Response': props.posX,
-        'posY Response': props.posX,
+        'posY Response': props.posY,
         'rt': rt,
         'condition': trial_parameters.condition,
         'block': trial_parameters.block,

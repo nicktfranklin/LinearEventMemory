@@ -5,6 +5,7 @@ var subjID = '7' + Math.random().toString().substring(3,8);
 var d = new Date();
 var filename = 'behavior_' + subjID + '_' + d.getTime() + '.csv';
 var filename_questionnaire = 'questionnaire_' + subjID + '_' + d.getTime() + '.csv';
+var time_start = d.getTime();
 var gender;
 var age;
 
@@ -56,7 +57,7 @@ function load_mturk_id() {
     // once the "Next" button has been clicked, create the filename and the mTurkID
     function() {
       mTurkID = document.getElementById("mTurkID").value;
-      var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score\n';
+      var csv_header_string = 'mTurkID,trialNumber,posX,posY,posX Response,posY Response,rt,condition,block,trial_score\n';
       $.post("post_results.php",{postresult: csv_header_string, postfile: filename});
       load_instructions_1();
     }
@@ -198,6 +199,7 @@ function load_questionaire_2() {
         'difficulty': document.getElementById("difficulty").value,
         'strategy': document.getElementById("strategy").value,
         'freeform': document.getElementById("freeform").value,
+        'timeElapsed': d.getTime() - time_start,
       };
 
       $.post("post_results.php",{postresult: JSON.stringify(questionnaire), postfile: filename_questionnaire});
