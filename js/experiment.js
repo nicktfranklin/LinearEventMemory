@@ -8,6 +8,7 @@ var filename_questionnaire = 'questionnaire_' + subjID + '_' + d.getTime() + '.c
 var time_start = d.getTime();
 var gender;
 var age;
+var end_time;
 
 // helper functions
 function load_page(page, callback) {
