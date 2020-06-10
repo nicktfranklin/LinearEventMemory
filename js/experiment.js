@@ -173,7 +173,7 @@ function load_questionaire_1() {
   var callback = function() {set_next_onclick(
     // once the "Next" button has been clicked, create the filename and the mTurkID
     function() {
-      end_time = d.getTime();
+      // end_time = d.getTime();
       gender = document.getElementById("gender").value;
       age =  document.getElementById("gender").value;
       // var csv_header_string = 'mTurkID,trialNumber,posX,poxY,posX Response,posY Response,rt,condition,block,trial_score';
@@ -186,12 +186,18 @@ function load_questionaire_1() {
   load_page('./static/templates/questionnaires/questionnaire-demographics.html',callback);
 }
 
+// function get_time() {
+//   
+
+// }
+
 function load_questionaire_2() {
   // this call back function is called once the html is loaded...
   var callback = function() {set_next_onclick(
     // once the "Next" button has been clicked, create the filename and the mTurkID
     function() {
-
+      d = new Date;
+      end_time = d.getTime();
       
       var questionnaire = {
         'mTurkID': mTurkID,
