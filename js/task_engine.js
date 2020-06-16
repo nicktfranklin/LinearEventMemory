@@ -75,13 +75,13 @@ for (var ii=0; ii < n_trials; ii ++){
   // sample block h1
   block_h1_trials.push(
     generate_trial_parameters(
-      A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+      A_h, process_init_h, process_noise_h, observ_noise, observ_scale,
       )
   )
   // sample block l2
   block_h2_trials.push(
     generate_trial_parameters(
-      A_l, process_init_l, process_noise_l, observ_noise, observ_scale,
+      A_h, process_init_h, process_noise_h, observ_noise, observ_scale,
       )
   )
 
